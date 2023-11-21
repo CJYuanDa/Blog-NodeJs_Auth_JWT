@@ -3,6 +3,7 @@ const express = require('express');
 const expressLayout = require('express-ejs-layouts');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
+const cookieParser = require('cookie-parser');
 
 // create PORT
 const PORT = 3000 || process.env.PORT;
@@ -12,13 +13,14 @@ const app = express();
 
 // set view engine
 app.use(expressLayout);
-app.set('layout', './main');
+app.set('layout', './layouts/main');
 app.set('view engine', 'ejs');
 
 // set middleware
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended:true }));
+app.use(cookieParser());
 
 // connecting to database
 mongoose.connect(process.env.MONGODB_URI)
@@ -30,6 +32,6 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // set route
 app.get('/', (req, res) => {
-    res.render('main');
+    res.render('home');
 })
 app.use(authRoutes);
