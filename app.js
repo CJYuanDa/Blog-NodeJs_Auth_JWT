@@ -4,6 +4,7 @@ const expressLayout = require('express-ejs-layouts');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser');
+const { requireAuth, checkUser } = require('./middleware/authMiddleware');
 
 // create PORT
 const PORT = 3000 || process.env.PORT;
@@ -31,7 +32,8 @@ mongoose.connect(process.env.MONGODB_URI)
     .catch((err) => console.log(err));
 
 // set route
+app.get('*', checkUser);
 app.get('/', (req, res) => {
     res.render('home');
-})
+});
 app.use(authRoutes);
