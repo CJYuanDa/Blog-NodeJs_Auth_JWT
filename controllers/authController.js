@@ -1,5 +1,6 @@
-require('dotenv').config();
+// require('dotenv').config();
 const User = require('../models/User');
+const Post = require('../models/Post');
 const jwt = require('jsonwebtoken');
 
 // create token
@@ -40,21 +41,29 @@ function handelErrors(err) {
     return errors;
 };
 
-// get
+// get - signup
 module.exports.signup_get = (req, res) => {
-    res.render('signup');
+    const locals = {
+        title: 'Sign Up'
+    };
+    res.render('signup', { locals });
 };
 
+// get - login
 module.exports.login_get = (req, res) => {
-    res.render('login');
+    const locals = { 
+        title: 'Log In'
+    }
+    res.render('login', { locals });
 };
 
+// get - logout
 module.exports.logout_get = (req,res) => {
     res.cookie('jwt', '', { maxAge: 1 });
     res.redirect('/');
 };
 
-// post
+// post - signup
 module.exports.signup_post = async (req, res) => {
     const  { nickName, email, password } = req.body; 
     try {
@@ -68,6 +77,7 @@ module.exports.signup_post = async (req, res) => {
     }
 };
 
+// post - login
 module.exports.login_post = async (req, res) => {
     const  { email, password } = req.body; 
     try {
@@ -79,4 +89,56 @@ module.exports.login_post = async (req, res) => {
         let errors = handelErrors(error);
         res.status(400).send({ errors });
     }
+};
+
+// get - blog
+module.exports.blog_get = async (req, res) => {
+    try {
+        const email = req.params.email;
+        const data = await Post.find({ email });
+        const { nickName } = await User.findOne({ email });
+        const locals = {
+            title: `${nickName}'s Blog`
+        }
+        res.render('blog', { locals, data });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// get - add blog
+module.exports.add_blog_get = (req, res) => {
+    const locals = {
+        title: 'Add New Post'
+    };
+    res.render('add-blog', { locals });
+};
+
+// post - add blog
+module.exports.add_blog_post = async (req, res) => {
+    try {
+    const { title, body } = req.body;
+    const token = req.cookies.jwt;
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    let { email } = await User.findById(decodedToken.id);
+        const post = await Post.create({ email, title, body });
+        res.status(200).json(post)
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+// get - each post
+module.exports.post_get = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const post = await Post.findById(id);
+        const locals = {
+            title: post.title
+        };
+        res.render('post', { locals, post });
+    } catch (error) {
+        console.log(error);
+    }
+    
 };
