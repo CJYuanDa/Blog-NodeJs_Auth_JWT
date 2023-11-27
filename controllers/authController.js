@@ -41,6 +41,19 @@ function handelErrors(err) {
     return errors;
 };
 
+// get - home
+module.exports.home_get = async (req, res) => {
+    const locals = {
+        title: 'Home'
+    };
+    try {
+        const data = await Post.find();
+        res.render('home', { locals, data })
+    } catch (error) {
+
+    }
+};
+
 // get - signup
 module.exports.signup_get = (req, res) => {
     const locals = {
@@ -95,6 +108,14 @@ module.exports.login_post = async (req, res) => {
 module.exports.blog_get = async (req, res) => {
     try {
         const email = req.params.email;
+        const token = req.cookies.jwt;
+        if (token) {
+            const decodedToken = jwt.verify(token, process.env.SECRET);
+            let { email: tokenEmail} = await User.findById(decodedToken.id);
+            if (tokenEmail === email) {
+                /////////////////////
+            }
+        }
         const data = await Post.find({ email });
         const { nickName } = await User.findOne({ email });
         const locals = {
@@ -120,9 +141,9 @@ module.exports.add_blog_post = async (req, res) => {
     const { title, body } = req.body;
     const token = req.cookies.jwt;
     const decodedToken = jwt.verify(token, process.env.SECRET);
-    let { email } = await User.findById(decodedToken.id);
-        const post = await Post.create({ email, title, body });
-        res.status(200).json(post)
+    let { nickName, email } = await User.findById(decodedToken.id);
+    const post = await Post.create({ nickName, email, title, body });
+    res.status(200).json(post)
     } catch (error) {
         console.log(error);
     }
@@ -133,12 +154,12 @@ module.exports.post_get = async (req, res) => {
     try {
         const id = req.params.id;
         const post = await Post.findById(id);
+        const { nickName: host } = await User.findOne({ email: post.email});
         const locals = {
             title: post.title
         };
-        res.render('post', { locals, post });
+        res.render('post', { locals, post, host });
     } catch (error) {
         console.log(error);
     }
-    
 };

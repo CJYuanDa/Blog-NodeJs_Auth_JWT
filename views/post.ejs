@@ -1,3 +1,14 @@
-<h1><%= post.title %></h1>
-<article class="article"><%= post.body %></article>
-<a href=""></a>
+<div class="post">
+    <h2 class="post-title post-content"><%= post.title %>
+        <span class="post-date"><%= post.updatedAt.toDateString() %></span>
+    </h2>
+    <section class="post-body post-content">
+        <article ><%= post.body %></article>
+        <div class="post-host-div">
+            <a href="/blog/<%= post.email %>" class="post-host"><b>Author: <%= host %></b></a>
+        </div>
+    </section>
+    <a href="" class="post-btn">Edit</a><span><a href="" class="post-btn">Delete</a></span>
+    <button onclick="history.back()">Go Back</button>
+    <!-- <a href="#" class="like">&hearts;</a> -->
+</div>

@@ -33,7 +33,4 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // set route
 app.get('*', checkUser);
-app.get('/', (req, res) => {
-    res.render('home');
-});
 app.use(authRoutes);
