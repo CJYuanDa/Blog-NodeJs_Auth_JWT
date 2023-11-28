@@ -3,6 +3,7 @@
     <ul>
         <% if (user) { %>
             <li>Welcome, <%= user.nickName %></li>
+            <li><a href="/blog/<%= user.email %>" class="header-blogs">Blogs</a></li>
             <li><a href="/add-blog" class="btn">Add Post</a></li>
             <li><a href="/logout">Log Out</a></li>
         <% } else { %>

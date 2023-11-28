@@ -26,4 +26,11 @@ router.get('/blog/:email', authController.blog_get);
 // each post
 router.get('/post/:id', authController.post_get);
 
+// edit post
+router.get('/edit-post/:id', authController.edit_get);
+router.put('/edit-post/:id', authController.edit_put);
+
+// delete post
+router.delete('/delete-post/:id', authController.delete_post);
+
 module.exports = router;
